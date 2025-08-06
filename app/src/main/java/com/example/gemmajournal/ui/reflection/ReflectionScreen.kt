@@ -7,12 +7,26 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+//import androidx.compose.ui.graphics.RoundedCornerShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+
 import androidx.compose.runtime.collectAsState
 import com.example.gemmajournal.data.JournalEntry
 
@@ -39,29 +53,34 @@ fun ReflectionScreen(
     ) {
         Text(
             text = "What did Gemma understand from your entry?",
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 24.dp)
+            modifier = Modifier.padding(bottom = 32.dp)
         )
         
         // Reflection Summary Card
         Card(
             modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            )
         ) {
             Column(
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(20.dp)
             ) {
                 Text(
                     text = "Reflection",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.padding(bottom = 12.dp)
                 )
                 Text(
                     text = entry.reflection,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         }
@@ -71,10 +90,14 @@ fun ReflectionScreen(
         // Mood and Tags Card
         Card(
             modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer
+            )
         ) {
             Column(
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(20.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -83,10 +106,16 @@ fun ReflectionScreen(
                 ) {
                     Text(
                         text = "Mood & Tags",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
-                    IconButton(onClick = { viewModel.toggleEditing() }) {
+                    IconButton(
+                        onClick = { viewModel.toggleEditing() },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                        )
+                    ) {
                         Icon(
                             imageVector = if (uiState.isEditing) Icons.Filled.Check else Icons.Filled.Edit,
                             contentDescription = if (uiState.isEditing) "Save changes" else "Edit tags"
@@ -100,7 +129,8 @@ fun ReflectionScreen(
                 Text(
                     text = "Mood: ${entry.mood}",
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    modifier = Modifier.padding(bottom = 12.dp)
                 )
                 
                 // Tags
@@ -108,7 +138,8 @@ fun ReflectionScreen(
                     Text(
                         text = "Tags:",
                         style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(bottom = 4.dp)
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        modifier = Modifier.padding(bottom = 8.dp)
                     )
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -117,7 +148,12 @@ fun ReflectionScreen(
                         items(uiState.editedTags) { tag ->
                             AssistChip(
                                 onClick = { /* Tag click handling */ },
-                                label = { Text(tag) }
+                                label = { Text(tag) },
+                                colors = AssistChipDefaults.assistChipColors(
+                                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                                    labelColor = MaterialTheme.colorScheme.onTertiaryContainer
+                                ),
+                                shape = RoundedCornerShape(16.dp)
                             )
                         }
                     }
@@ -130,7 +166,7 @@ fun ReflectionScreen(
         // Action Buttons
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Button(
                 onClick = {
@@ -140,28 +176,50 @@ fun ReflectionScreen(
                         onNavigateToTimeline()
                     }
                 },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = 8.dp,
+                    pressedElevation = 4.dp
+                )
             ) {
                 Icon(
                     imageVector = if (uiState.isEditing) Icons.Filled.Save else Icons.Filled.List,
                     contentDescription = if (uiState.isEditing) "Save" else "View Timeline"
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(if (uiState.isEditing) "Save" else "View Timeline")
+                Text(
+                    text = if (uiState.isEditing) "Save" else "View Timeline",
+                    style = MaterialTheme.typography.labelLarge
+                )
             }
-            
-            Spacer(modifier = Modifier.width(16.dp))
             
             Button(
                 onClick = onNavigateToMemoryRecall,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
+                ),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = 8.dp,
+                    pressedElevation = 4.dp
+                )
             ) {
                 Icon(
                     imageVector = Icons.Filled.Search,
                     contentDescription = "Ask About Past"
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Ask About Past")
+                Text(
+                    text = "Ask About Past",
+                    style = MaterialTheme.typography.labelLarge
+                )
             }
         }
         
@@ -169,14 +227,26 @@ fun ReflectionScreen(
         
         Button(
             onClick = onNavigateToNewEntry,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.tertiary,
+                contentColor = MaterialTheme.colorScheme.onTertiary
+            ),
+            elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = 8.dp,
+                pressedElevation = 4.dp
+            )
         ) {
             Icon(
                 imageVector = Icons.Filled.Add,
                 contentDescription = "New Entry"
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text("New Entry")
+            Text(
+                text = "New Entry",
+                style = MaterialTheme.typography.labelLarge
+            )
         }
         
         if (uiState.isLoading) {

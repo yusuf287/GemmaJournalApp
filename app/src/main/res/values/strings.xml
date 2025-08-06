@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">GemmaJournal</string>
+    <string name="app_name">Gemma Journal</string>
+    <string name="app_description">Your personal AI-powered journaling companion</string>
 </resources>

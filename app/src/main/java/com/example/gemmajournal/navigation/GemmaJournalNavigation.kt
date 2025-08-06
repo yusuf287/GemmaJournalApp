@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.example.gemmajournal.data.JournalDatabase
 import com.example.gemmajournal.data.JournalRepository
 import com.example.gemmajournal.ai.AIService
+import com.example.gemmajournal.ui.home.HomePage // Import HomePage
 import com.example.gemmajournal.ui.newentry.NewEntryScreen
 import com.example.gemmajournal.ui.newentry.NewEntryViewModel
 import com.example.gemmajournal.ui.reflection.ReflectionScreen
@@ -30,15 +31,22 @@ fun GemmaJournalNavigation(
     
     NavHost(
         navController = navController,
-        startDestination = NavRoutes.NewEntry.route,
+        startDestination = NavRoutes.Home.route, // Changed start destination to Home
         modifier = modifier
     ) {
+        composable(NavRoutes.Home.route) { // Added composable for Home route
+            HomePage(
+                onNavigateToNewEntry = {
+                    navController.navigate(NavRoutes.NewEntry.route)
+                }
+            )
+        }
+
         composable(NavRoutes.NewEntry.route) {
             val viewModel = NewEntryViewModel(repository, aiService)
             NewEntryScreen(
                 viewModel = viewModel,
                 onNavigateToReflection = { entry ->
-                    // Navigate to reflection with the new entry
                     navController.navigate(NavRoutes.Reflection.createRoute(entry.id))
                 }
             )
@@ -53,8 +61,6 @@ fun GemmaJournalNavigation(
             val entryId = backStackEntry.arguments?.getLong("entryId") ?: 0L
             val viewModel = ReflectionViewModel(repository)
             
-            // For now, we'll pass a placeholder entry
-            // In a real app, you'd fetch the entry by ID
             val placeholderEntry = com.example.gemmajournal.data.JournalEntry(
                 id = entryId,
                 content = "Sample journal entry",
